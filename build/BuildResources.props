@@ -1,0 +1,8 @@
+<Project>
+    
+  <PropertyGroup>
+    <ModuleId>Bannerlord.HorseSummary</ModuleId>
+    <ModuleName>UI Mount Types Summary</ModuleName>
+  </PropertyGroup>
+
+</Project>
