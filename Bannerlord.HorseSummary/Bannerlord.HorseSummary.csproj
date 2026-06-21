@@ -4,11 +4,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <GameFolder>E:\bannerlord-1-2-12</GameFolder>
-    <OverrideGameVersion>v1.2.12</OverrideGameVersion>
-  </PropertyGroup>
-  
   <!-- NuGet Packages -->
   <ItemGroup>
     <PackageReference Include="Harmony.PatchBuilder" Version="1.1.0.5" />
