@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem.Party;
+using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.Information;
 using TaleWorlds.Library;
@@ -39,11 +40,27 @@ internal class MountTooltip
 
         int totalHorses = horses.Sum(x => x.Count);
 
+        var needingMount = party.Party.NumberOfMenWithoutHorse;
+        var availableMounts = party.ItemRoster.NumberOfMounts;
+        var mounted = Math.Min(availableMounts, needingMount);
+
+        var roster = party.ItemRoster;
+
+        int excessMounts = Math.Max(
+            0,
+            roster.NumberOfMounts - Math.Min(
+                party.Party.NumberOfMenWithoutHorse,
+                roster.NumberOfMounts));
+
+        int herdSize = roster.NumberOfPackAnimals
+            + roster.NumberOfLivestockAnimals
+            + excessMounts;
+
         var result = new List<TooltipProperty>
         {
             CreateTitleLine(),
-            CreateMountedFootmenLine(party),
-            CreateHerdingLine(party),
+            CreateThresholdLine("{=5bSWSaPl}Footmen on horses", mounted, needingMount),
+            CreateThresholdLine("{=NhAMSaWU}Herding", herdSize, party.MemberRoster.TotalManCount),
             CreateSeparatorLine()
         };
 
@@ -77,7 +94,12 @@ internal class MountTooltip
 
     private static TooltipProperty CreateTitleLine()
     {
-        return new TooltipProperty(new TextObject("{=Sb1MKbvP}Mounts and Pack Animals").ToString(), string.Empty, 0, false, TooltipProperty.TooltipPropertyFlags.Title);
+        return new TooltipProperty(
+            new TextObject("{=Sb1MKbvP}Mounts and Pack Animals").ToString(),
+            string.Empty,
+            0,
+            false,
+            TooltipProperty.TooltipPropertyFlags.Title);
     }
 
     private static TooltipProperty CreateSeparatorLine()
@@ -90,38 +112,16 @@ internal class MountTooltip
             TooltipProperty.TooltipPropertyFlags.RundownSeperator);
     }
 
-    private static TooltipProperty CreateMountedFootmenLine(MobileParty party)
+    private static TooltipProperty CreateThresholdLine(string title, int current, int max)
     {
-        var needingMount = party.Party.NumberOfMenWithoutHorse;
-        var availableMounts = party.ItemRoster.NumberOfMounts;
-        var mounted = Math.Min(availableMounts, needingMount);
-
-        TextObject mountedTroopTextObject = new TextObject($"{mounted}/{needingMount}");
-        Color color = needingMount > mounted
+        TextObject thresholdTextObject = new TextObject($"{current}/{max}");
+        Color color = current > max
             ? RedColor
             : default;
 
         return new TooltipProperty(
-            new TextObject("{=5bSWSaPl}Footmen on horses").ToString(),
-            mountedTroopTextObject.ToString(),
-            0,
-            color);
-    }
-
-    private static TooltipProperty CreateHerdingLine(MobileParty party)
-    {
-        var totalManCount = party.MemberRoster.TotalManCount;
-        var herdSize = party.ItemRoster.NumberOfPackAnimals
-            + party.ItemRoster.NumberOfLivestockAnimals;
-
-        TextObject herdingTextObject = new TextObject($"{herdSize}/{totalManCount}");
-        Color color = herdSize > totalManCount
-            ? RedColor
-            : default;
-
-        return new TooltipProperty(
-            new TextObject("{=NhAMSaWU}Herding").ToString(),
-            herdingTextObject.ToString(),
+            new TextObject(title).ToString(),
+            thresholdTextObject.ToString(),
             0,
             color);
     }
