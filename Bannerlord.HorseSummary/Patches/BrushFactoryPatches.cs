@@ -15,9 +15,11 @@ internal class BrushFactoryPatches
                 .Postfix(GetBrushPostfix);
     }
 
-    private static void GetBrushPostfix(BrushFactory __instance, Brush __result)
+    private static void GetBrushPostfix(BrushFactory __instance, Brush? __result)
     {
-        if (__result.Name != "MapBar.Right.Icons" || __result.GetLayer("mounts") is not null)
+        if (__result is null
+            || __result.Name != "MapBar.Right.Icons"
+            || __result.GetLayer("mounts") is not null)
         {
             return;
         }
