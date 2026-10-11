@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem.Party;
-using TaleWorlds.CampaignSystem.Roster;
 using TaleWorlds.Core;
 using TaleWorlds.Core.ViewModelCollection.Information;
 using TaleWorlds.Library;
@@ -14,7 +13,7 @@ internal class MountTooltip
 {
     private static readonly Color RedColor = new Color(0.82f, 0.12f, 0.07f, 1f);
 
-    private static ItemCategory[] HorseCategories = [];
+    private static string[] HorseCategories = [];
 
     public static List<TooltipProperty> Build()
     {
@@ -22,17 +21,17 @@ internal class MountTooltip
         {
             HorseCategories =
             [
-                DefaultItemCategories.NobleHorse,
-                DefaultItemCategories.WarHorse,
-                DefaultItemCategories.Horse,
-                DefaultItemCategories.PackAnimal
+                DefaultItemCategories.NobleHorse.StringId,
+                DefaultItemCategories.WarHorse.StringId,
+                DefaultItemCategories.Horse.StringId,
+                DefaultItemCategories.PackAnimal.StringId
             ];
         }
 
         var party = MobileParty.MainParty;
 
         var horses = party.ItemRoster
-            .Where(e => HorseCategories.Contains(e.EquipmentElement.Item.ItemCategory))
+            .Where(e => HorseCategories.Contains(e.EquipmentElement.Item.ItemCategory.StringId))
             .GroupBy(e => e.EquipmentElement.Item.ItemCategory)
             .Select(g => (Category: g.Key, Count: g.Sum(e => e.Amount)))
             .OrderBy(x => Array.IndexOf(HorseCategories, x.Category))
